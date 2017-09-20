@@ -137,7 +137,7 @@ class P2PNetwork
 	{
 		var self = this;
 		
-		self.components.name = component;
+		self.components[name] = component;
 	}
 }
 

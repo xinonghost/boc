@@ -4,11 +4,9 @@
 
 'use strict'
 
-var express = require("express");
-var bodyParser = require('body-parser');
-
 var Blockchain = require('./Blockchain');
 var P2PNetwork = require('./P2PNetwork');
+var RPCServer = require('./RPCServer');
 
 /**
  * Class App
@@ -23,11 +21,14 @@ class App
 	{
 		this.config = config;
 
-		// Blockchain manager
-		this.Blockchain = new Blockchain();
+		/** @var Blockchain Blockchain */
+		this.blockchain = new Blockchain();
 
-		// P2P network instance
+		/** @var P2PNetwork phpNetwork */
 		this.p2pNetwork = new P2PNetwork(config);
+
+		/** @var RPCServer rpcServer */
+		this.rpcServer = new RPCServer(config);
 	}
 
 	/**
@@ -48,17 +49,8 @@ class App
 	{
 		var self = this;
 		
-		var app = express();
-		app.use(bodyParser.json());
-
-		app.get('/blocks', function(req, res) {
-			res.send(JSON.stringify(self.Blockchain.getBlocks()));
-		});
-
-		app.listen(
-			self.config.rpcPort,
-			function() { console.log('Listening RPC on port: ' + self.config.rpcPort); }
-		);
+		self.rpcServer.setComponent('blockchain', self.blockchain);
+		self.rpcServer.start();
 	}
 
 	/**
@@ -68,7 +60,7 @@ class App
 	{
 		var self = this;
 
-		self.p2pNetwork.setComponent('blockchain', self.Blockchain);
+		self.p2pNetwork.setComponent('blockchain', self.blockchain);
 		self.p2pNetwork.start();
 	}
 }
