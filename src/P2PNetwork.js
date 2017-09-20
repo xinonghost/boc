@@ -5,6 +5,7 @@
 'use strict'
 
 var WebSocket = require("ws");
+var Message = require('./Message');
 
 /**
  * Class P2PNetwork
@@ -50,6 +51,9 @@ class P2PNetwork
 		self.sockets.push(ws);
 		self.initMessageHandler(ws);
 		self.initErrorHandler(ws);
+
+		var message = new Message(Message.GUERY_LATEST);
+		self.ask(ws, message);
 	}
 
 	/**
@@ -61,8 +65,20 @@ class P2PNetwork
 		var self = this;
 
 		ws.on('message', function(data) {
-			var message = JSON.parse(data);
+			var message = Message.parse(data);
 			console.log('Received message' + JSON.stringify(message));
+
+			switch (message.type) {
+				case Message.GUERY_LATEST:
+					console.log('[INFO] Latest block asked.');
+					self.answer(ws, new Message(Message.RESPONSE_LATEST, 1));
+					break;
+				case Message.RESPONSE_LATEST:
+					console.log('[INFO] Latest block response received.');
+					break;
+				default:
+					console.log('[WARNING] Undefined message type received.');
+			}
 		});
 	}
 
@@ -93,11 +109,23 @@ class P2PNetwork
 	/**
 	 * Send request.
 	 * @param WebSocket ws
-	 * @param int type
+	 * @param Message message
 	 */
-	ask(ws, type)
+	ask(ws, message)
 	{
-		write(ws, type);
+		write(ws, message.pack());
+	}
+
+	/**
+	 * Send response.
+	 * @param WebSocket ws
+	 * @param Message message
+	 */
+	answer(ws, message)
+	{
+		var self = this;
+
+		self.ask(ws, message);
 	}
 
 	/**
