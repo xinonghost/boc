@@ -15,7 +15,7 @@ class Message
 		this.type = type;
 
 		/** @var mixed data Data to transfer. */
-		this.data = data ? : null;
+		this.data = data ? data : null;
 	}
 
 	/**
@@ -36,14 +36,14 @@ class Message
 
 	/**
 	 * Unpack received message.
-	 * @param string package
+	 * @param string pkg
 	 * @return Message
 	 */
-	static unpack(package)
+	static unpack(pkg)
 	{
-		var messageData = JSON.parse(package);
+		var messageData = JSON.parse(pkg);
 
-		return new Message(package.type, package.data ? : null);
+		return new Message(messageData.type, messageData.data ? messageData.data : null);
 	}
 
 	/**
@@ -54,11 +54,11 @@ class Message
 	{
 		var self = this;
 
-		var package = {type: self.type};
+		var pkg = {type: self.type};
 		if (self.data)
-			package.data = self.data;
+			pkg.data = self.data;
 
-		return package;
+		return pkg;
 	}
 }
 

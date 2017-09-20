@@ -65,7 +65,7 @@ class P2PNetwork
 		var self = this;
 
 		ws.on('message', function(data) {
-			var message = Message.parse(data);
+			var message = Message.unpack(data);
 			console.log('Received message' + JSON.stringify(message));
 
 			switch (message.type) {
