@@ -12,3 +12,6 @@ exports.rpcPort = process.env.HTTP_PORT || '3002';
 
 // Initial peers to start with.
 exports.initialPeers = process.env.PEERS ? process.env.PEERS.split(',') : [];
+
+// Peers of network.
+exports.peers = [];

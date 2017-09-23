@@ -12,7 +12,7 @@ var Message = require('./Message');
  */
 class P2PNetwork
 {
-	constructor(config)
+	constructor(config, app)
 	{
 		this.config = config;
 
@@ -24,6 +24,9 @@ class P2PNetwork
 
 		// Socket list
 		this.sockets = [];
+
+		/** @var App app */
+		this.app = app;
 	}
 
 	/**
@@ -138,6 +141,17 @@ class P2PNetwork
 		var self = this;
 		
 		self.components[name] = component;
+	}
+
+	/**
+	 * Add peer.
+	 * @param string ip
+	 */
+	addPeer(ip)
+	{
+		var self = this;
+
+		self.sockets.push(ip);
 	}
 }
 

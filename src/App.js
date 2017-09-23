@@ -5,8 +5,8 @@
 'use strict'
 
 var Blockchain = require('./Blockchain');
-var P2PNetwork = require('./P2PNetwork');
-var RPCServer = require('./RPCServer');
+var P2PNetwork = require('./P2P/P2PNetwork');
+var RPCServer = require('./RPC/RPCServer');
 
 /**
  * Class App
@@ -25,10 +25,10 @@ class App
 		this.blockchain = new Blockchain();
 
 		/** @var P2PNetwork phpNetwork */
-		this.p2pNetwork = new P2PNetwork(config);
+		this.p2pNetwork = new P2PNetwork(config, this);
 
 		/** @var RPCServer rpcServer */
-		this.rpcServer = new RPCServer(config);
+		this.rpcServer = new RPCServer(config, this);
 	}
 
 	/**

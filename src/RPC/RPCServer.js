@@ -6,16 +6,20 @@
 
 var express = require("express");
 var bodyParser = require('body-parser');
+var Response = require('./Response');
 
 class RPCServer
 {
-	constructor(config)
+	constructor(config, app)
 	{
 		/** @var object config App configuration. */
 		this.config = config;
 
-		/** @var express app */
-		this.app = null;
+		/** @var express server */
+		this.server = null;
+
+		/** @var App app */
+		this.app = app;
 
 		/** @var object components */
 		this.components = {};
@@ -28,17 +32,34 @@ class RPCServer
 	{
 		var self = this;
 		
-		self.app = express();
-		self.app.use(bodyParser.json());
+		self.server = express();
+		self.server.use(bodyParser.json());
 
-		self.app.get('/blocks', function(req, res) {
+		self.server.get('/blocks', function(req, res) {
 			res.send(JSON.stringify(self.components.blockchain.getBlocks()));
 		});
 
-		self.app.listen(
+		this.handleAddPeerRequest();
+
+		self.server.listen(
 			self.config.rpcPort,
 			function() { console.log('Listening RPC on port: ' + self.config.rpcPort); }
 		);
+	}
+
+	/**
+	 * Add peer request handler.
+	 */
+	handleAddPeerRequest()
+	{
+		var self = this;
+
+		self.server.get('/peers/add/:ip', function(req, res) {
+			console.log(self.app.p2pNetwork.addPeer(req.params.ip));
+			console.log(self.app.p2pNetwork.sockets);
+
+			res.send(Response.give(req.params.ip));
+		});
 	}
 
 	/**
