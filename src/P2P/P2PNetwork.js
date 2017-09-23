@@ -51,7 +51,7 @@ class P2PNetwork
 		self.initMessageHandler(ws, self);
 		self.initErrorHandler(ws, self);
 
-		var message = new Message(Message.GUERY_LATEST);
+		var message = new Message(Message.QUERY_LATEST);
 		self.ask(ws, message);
 	}
 
@@ -62,20 +62,21 @@ class P2PNetwork
 	initMessageHandler(ws, self)
 	{
 		ws.on('message', function(data) {
+			// console.log(data);
 			var message = Message.unpack(data);
-			console.log('Received message' + JSON.stringify(message));
+			// console.log('Received message: ' + JSON.stringify(message));
 
-			switch (message.type) {
-				case Message.GUERY_LATEST:
-					console.log('[INFO] Latest block asked.');
-					self.answer(ws, new Message(Message.RESPONSE_LATEST, 1));
-					break;
-				case Message.RESPONSE_LATEST:
-					console.log('[INFO] Latest block response received.');
-					break;
-				default:
-					console.log('[WARNING] Undefined message type received.');
-			}
+			// switch (message.type) {
+			// 	case Message.GUERY_LATEST:
+			// 		console.log('[INFO] Latest block asked.');
+			// 		self.answer(ws, new Message(Message.RESPONSE_LATEST, 1));
+			// 		break;
+			// 	case Message.RESPONSE_LATEST:
+			// 		console.log('[INFO] Latest block response received.');
+			// 		break;
+			// 	default:
+			// 		console.log('[WARNING] Undefined message type received.');
+			// }
 		});
 	}
 
@@ -146,7 +147,7 @@ class P2PNetwork
 
 		try {
 			var ws = new WebSocket(peer);
-			ws.on('open', function(ws) { self.initConnection(ws, self); });
+			ws.on('open', function() { self.initConnection(ws, self); });
 			ws.on('error', function(e) {
 				console.log('[P2P] Connection failed to IP: ' + ip);
 			});
