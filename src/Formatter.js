@@ -18,7 +18,7 @@ class Formatter
 	 * @param string hex
 	 * @return string
 	 */
-	static formatHex(hex, length = 0)
+	static formatHex(hex, length)
 	{
 		hex = hex.length % 2 != 0 ? '0' + hex : hex;
 

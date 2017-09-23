@@ -10,16 +10,13 @@ var Response = require('./Response');
 
 class RPCServer
 {
-	constructor(config, app)
+	constructor(app)
 	{
-		/** @var object config App configuration. */
-		this.config = config;
+		/** @var App app */
+		this.app = app;
 
 		/** @var express server */
 		this.server = null;
-
-		/** @var App app */
-		this.app = app;
 
 		/** @var object components */
 		this.components = {};
@@ -42,8 +39,8 @@ class RPCServer
 		this.handleAddPeerRequest();
 
 		self.server.listen(
-			self.config.rpcPort,
-			function() { console.log('Listening RPC on port: ' + self.config.rpcPort); }
+			self.app.config.rpcPort,
+			function() { console.log('Listening RPC on port: ' + self.app.config.rpcPort); }
 		);
 	}
 
@@ -55,10 +52,11 @@ class RPCServer
 		var self = this;
 
 		self.server.get('/peers/add/:ip', function(req, res) {
-			console.log(self.app.p2pNetwork.addPeer(req.params.ip));
-			console.log(self.app.p2pNetwork.sockets);
-
-			res.send(Response.give(req.params.ip));
+			var result = self.app.p2pNetwork.addPeer(req.params.ip)
+			if (!result)
+				res.send(Response.give(req.params.ip));
+			else
+				res.send(Response.giveError(result));
 		});
 	}
 

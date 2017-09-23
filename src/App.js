@@ -25,10 +25,10 @@ class App
 		this.blockchain = new Blockchain();
 
 		/** @var P2PNetwork phpNetwork */
-		this.p2pNetwork = new P2PNetwork(config, this);
+		this.p2pNetwork = new P2PNetwork(this);
 
 		/** @var RPCServer rpcServer */
-		this.rpcServer = new RPCServer(config, this);
+		this.rpcServer = new RPCServer(this);
 	}
 
 	/**

@@ -12,9 +12,10 @@ var Message = require('./Message');
  */
 class P2PNetwork
 {
-	constructor(config, app)
+	constructor(app)
 	{
-		this.config = config;
+		/** @var App app */
+		this.app = app;
 
 		// P2P server
 		this.server = null;
@@ -24,9 +25,6 @@ class P2PNetwork
 
 		// Socket list
 		this.sockets = [];
-
-		/** @var App app */
-		this.app = app;
 	}
 
 	/**
@@ -36,11 +34,11 @@ class P2PNetwork
 	{
 		var self = this;
 
-		self.server = new WebSocket.Server({port: self.config.p2pPort});
+		self.server = new WebSocket.Server({port: self.app.config.p2pPort});
 
 		self.server.on('connection', function(ws) { self.initConnection(ws); });
 
-		console.log('Listening P2P on port: ' + self.config.p2pPort);
+		console.log('Listening P2P on port: ' + self.app.config.p2pPort);
 	}
 
 	/**
@@ -146,12 +144,26 @@ class P2PNetwork
 	/**
 	 * Add peer.
 	 * @param string ip
+	 * @return string|bool
 	 */
 	addPeer(ip)
 	{
 		var self = this;
 
-		self.sockets.push(ip);
+		var peer = 'ws//' + ip + self.app.config.p2pPort;
+
+		try {
+			var ws = new WebSocket(peer);
+			ws.on('open', self.initConnection);
+			ws.on('error', function() {
+				console.log('[P2P] Connection failed to IP: ' + ip);
+			});
+		} catch (e) {
+			console.log('[P2P] Connection error: ' + e.message);
+			return e.message;
+		}
+
+		return false;
 	}
 }
 
