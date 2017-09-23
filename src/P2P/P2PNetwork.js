@@ -150,12 +150,12 @@ class P2PNetwork
 	{
 		var self = this;
 
-		var peer = 'ws//' + ip + self.app.config.p2pPort;
+		var peer = 'ws://' + ip + ':' + self.app.config.p2pPort;
 
 		try {
 			var ws = new WebSocket(peer);
 			ws.on('open', self.initConnection);
-			ws.on('error', function() {
+			ws.on('error', function(e) {
 				console.log('[P2P] Connection failed to IP: ' + ip);
 			});
 		} catch (e) {
