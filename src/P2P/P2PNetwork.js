@@ -36,7 +36,7 @@ class P2PNetwork
 
 		self.server = new WebSocket.Server({port: self.app.config.p2pPort});
 
-		self.server.on('connection', function(ws) { self.initConnection(ws); });
+		self.server.on('connection', function(ws) { self.initConnection(ws, self); });
 
 		console.log('Listening P2P on port: ' + self.app.config.p2pPort);
 	}
@@ -45,13 +45,11 @@ class P2PNetwork
 	 * Init connection.
 	 * @param WebSocket ws
 	 */
-	initConnection(ws)
+	initConnection(ws, self)
 	{
-		var self = this;
-
 		self.sockets.push(ws);
-		self.initMessageHandler(ws);
-		self.initErrorHandler(ws);
+		self.initMessageHandler(ws, self);
+		self.initErrorHandler(ws, self);
 
 		var message = new Message(Message.GUERY_LATEST);
 		self.ask(ws, message);
@@ -61,10 +59,8 @@ class P2PNetwork
 	 * Init message handler.
 	 * @param WebSocket ws
 	 */
-	initMessageHandler(ws)
+	initMessageHandler(ws, self)
 	{
-		var self = this;
-
 		ws.on('message', function(data) {
 			var message = Message.unpack(data);
 			console.log('Received message' + JSON.stringify(message));
@@ -87,22 +83,18 @@ class P2PNetwork
 	 * Init error handler.
 	 * @param WebSocket ws
 	 */
-	initErrorHandler(ws)
+	initErrorHandler(ws, self)
 	{
-		var self = this;
-
-		ws.on('close', function() { self.closeConnection(ws); });
-		ws.on('error', function() { self.closeConnection(ws); });
+		ws.on('close', function() { self.closeConnection(ws, self); });
+		ws.on('error', function() { self.closeConnection(ws, self); });
 	}
 
 	/**
 	 * Close connection to peer.
 	 * @param WebSocket ws
 	 */
-	closeConnection(ws)
+	closeConnection(ws, self)
 	{
-		var self = this;
-
 		console.log('Connection failed to peer: ' + ws.url);
 		self.sockets.splice(self.sockets.indexOf(ws), 1);
 	}
@@ -114,7 +106,7 @@ class P2PNetwork
 	 */
 	ask(ws, message)
 	{
-		write(ws, message.pack());
+		ws.send(message.pack());
 	}
 
 	/**
@@ -154,7 +146,7 @@ class P2PNetwork
 
 		try {
 			var ws = new WebSocket(peer);
-			ws.on('open', self.initConnection);
+			ws.on('open', function(ws) { self.initConnection(ws, self); });
 			ws.on('error', function(e) {
 				console.log('[P2P] Connection failed to IP: ' + ip);
 			});
