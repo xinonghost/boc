@@ -41,10 +41,9 @@ class Message
 	 */
 	static unpack(pkg)
 	{
-		console.log('>>' + pkg);
-		// var messageData = JSON.parse(pkg);
+		var messageData = JSON.parse(pkg);
 
-		return new Message(1, null);
+		return new Message(messageData.type, messageData.data ? messageData.data : null);
 	}
 
 	/**
@@ -59,7 +58,7 @@ class Message
 		if (self.data)
 			pkg.data = self.data;
 
-		return pkg;
+		return JSON.stringify(pkg);
 	}
 }
 

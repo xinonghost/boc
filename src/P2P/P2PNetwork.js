@@ -51,6 +51,8 @@ class P2PNetwork
 		self.initMessageHandler(ws, self);
 		self.initErrorHandler(ws, self);
 
+		console.log('[P2P] New connection established.');
+
 		var message = new Message(Message.QUERY_LATEST);
 		self.ask(ws, message);
 	}
@@ -62,21 +64,20 @@ class P2PNetwork
 	initMessageHandler(ws, self)
 	{
 		ws.on('message', function(data) {
-			// console.log(data);
 			var message = Message.unpack(data);
-			// console.log('Received message: ' + JSON.stringify(message));
-
-			// switch (message.type) {
-			// 	case Message.GUERY_LATEST:
-			// 		console.log('[INFO] Latest block asked.');
-			// 		self.answer(ws, new Message(Message.RESPONSE_LATEST, 1));
-			// 		break;
-			// 	case Message.RESPONSE_LATEST:
-			// 		console.log('[INFO] Latest block response received.');
-			// 		break;
-			// 	default:
-			// 		console.log('[WARNING] Undefined message type received.');
-			// }
+			console.log('Received message: ' + JSON.stringify(message));
+			
+			switch (message.type) {
+				case Message.QUERY_LATEST:
+					console.log('[INFO] Latest block asked.');
+					// self.answer(ws, new Message(Message.RESPONSE_LATEST, 1));
+					break;
+				case Message.RESPONSE_LATEST:
+					console.log('[INFO] Latest block response received.');
+					break;
+				default:
+					console.log('[WARNING] Undefined message type received.');
+			}
 		});
 	}
 
@@ -87,7 +88,10 @@ class P2PNetwork
 	initErrorHandler(ws, self)
 	{
 		ws.on('close', function() { self.closeConnection(ws, self); });
-		ws.on('error', function() { self.closeConnection(ws, self); });
+		ws.on('error', function(e) {
+			console.log(e);
+			self.failConnection(ws, self);
+		});
 	}
 
 	/**
@@ -95,6 +99,16 @@ class P2PNetwork
 	 * @param WebSocket ws
 	 */
 	closeConnection(ws, self)
+	{
+		console.log('Connection closed to peer: ' + ws._socket.remoteAddress + ':' + ws._socket.remotePort);
+		self.sockets.splice(self.sockets.indexOf(ws), 1);
+	}
+
+	/**
+	 * Close connection to peer.
+	 * @param WebSocket ws
+	 */
+	failConnection(ws, self)
 	{
 		console.log('Connection failed to peer: ' + ws.url);
 		self.sockets.splice(self.sockets.indexOf(ws), 1);
@@ -107,6 +121,7 @@ class P2PNetwork
 	 */
 	ask(ws, message)
 	{
+		console.log(message.pack());
 		ws.send(message.pack());
 	}
 
