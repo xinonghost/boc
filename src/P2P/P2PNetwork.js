@@ -6,6 +6,7 @@
 
 var WebSocket = require("ws");
 var Message = require('./Message');
+var Queue = require('./Queue');
 
 /**
  * Class P2PNetwork
@@ -25,6 +26,22 @@ class P2PNetwork
 
 		// Socket list
 		this.sockets = [];
+
+		/** @var object states */
+		this.states = {};
+
+		/** @var Queue syncQueue */
+		this.syncQueue = new Queue();
+	}
+
+	/**
+	 * Compose WS id.
+	 * @param object ws
+	 * @return string
+	 */
+	static getWSId(ws)
+	{
+		return ws._socket.remoteAddress + ':' + ws._socket.remotePort;
 	}
 
 	/**
@@ -39,6 +56,38 @@ class P2PNetwork
 		self.server.on('connection', function(ws) { self.initConnection(ws, self); });
 
 		console.log('Listening P2P on port: ' + self.app.config.p2pPort);
+	}
+
+	/**
+	 * Queue processor.
+	 * @param string id
+	 * @param object self
+	 */
+	processQueue(id, self)
+	{
+		if (self.states[id] == undefined) {
+			self.states[id] = {
+				'isLocked': false,
+				'lastBlockHeight': 0,
+				'blocks': {}
+			};
+		}
+
+		if (self.states[id].isLocked) return;
+
+		var data = self.syncQueue.take(id);
+		if (!data) return;
+
+		switch (data.message.type) {
+			case Message.QUERY_LATEST:
+				console.log('[INFO] Latest block asked.');
+				break;
+			case Message.RESPONSE_LATEST:
+				console.log('[INFO] Latest block response received.');
+				break;
+			default:
+				console.log('[WARNING] Undefined message type received.');
+		}
 	}
 
 	/**
@@ -67,17 +116,13 @@ class P2PNetwork
 			var message = Message.unpack(data);
 			console.log('Received message: ' + JSON.stringify(message));
 			
-			switch (message.type) {
-				case Message.QUERY_LATEST:
-					console.log('[INFO] Latest block asked.');
-					// self.answer(ws, new Message(Message.RESPONSE_LATEST, 1));
-					break;
-				case Message.RESPONSE_LATEST:
-					console.log('[INFO] Latest block response received.');
-					break;
-				default:
-					console.log('[WARNING] Undefined message type received.');
-			}
+			var data = {
+				'id': P2PNetwork.getWSId(ws),
+				'ws': ws,
+				'message': message
+			};
+			self.syncQueue.put(data);
+			self.processQueue(data.id, self);
 		});
 	}
 
