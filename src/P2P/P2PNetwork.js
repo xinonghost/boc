@@ -32,6 +32,9 @@ class P2PNetwork
 
 		/** @var Queue syncQueue */
 		this.syncQueue = new Queue();
+
+		/** @var array WS IPs */
+		this.peerIPs = [];
 	}
 
 	/**
@@ -42,6 +45,16 @@ class P2PNetwork
 	static getWSId(ws)
 	{
 		return ws._socket.remoteAddress + ':' + ws._socket.remotePort;
+	}
+
+	/**
+	 * Compose WS IP address.
+	 * @param object ws
+	 * @return string
+	 */
+	static getWSIP(ws)
+	{
+		return ws._socket.remoteAddress;
 	}
 
 	/**
@@ -96,7 +109,15 @@ class P2PNetwork
 	 */
 	initConnection(ws, self)
 	{
+		console.log(self.peerIPs);
+		if (self.peerIPs.indexOf(P2PNetwork.getWSIP(ws)) != -1) {
+			console.log('[INFO] Peer is already exists.');
+			ws.close();
+			return;
+		}
+
 		self.sockets.push(ws);
+		self.peerIPs.push(P2PNetwork.getWSIP(ws));
 		self.initMessageHandler(ws, self);
 		self.initErrorHandler(ws, self);
 
@@ -114,7 +135,6 @@ class P2PNetwork
 	{
 		ws.on('message', function(data) {
 			var message = Message.unpack(data);
-			console.log('Received message: ' + JSON.stringify(message));
 			
 			var data = {
 				'id': P2PNetwork.getWSId(ws),
@@ -145,8 +165,11 @@ class P2PNetwork
 	 */
 	closeConnection(ws, self)
 	{
-		console.log('Connection closed to peer: ' + ws._socket.remoteAddress + ':' + ws._socket.remotePort);
-		self.sockets.splice(self.sockets.indexOf(ws), 1);
+		console.log('Connection closed to peer: ' + P2PNetwork.getWSId(ws));
+		if (self.sockets.indexOf(ws) != -1) {
+			self.peerIPs.splice(self.peerIPs.indexOf(P2PNetwork.getWSIP(ws)), 1);
+			self.sockets.splice(self.sockets.indexOf(ws), 1);
+		}
 	}
 
 	/**
@@ -155,8 +178,11 @@ class P2PNetwork
 	 */
 	failConnection(ws, self)
 	{
-		console.log('Connection failed to peer: ' + ws.url);
-		self.sockets.splice(self.sockets.indexOf(ws), 1);
+		console.log('Connection failed to peer: ' + P2PNetwork.getWSId(ws));
+		if (self.sockets.indexOf(ws) != -1) {
+			self.peerIPs.splice(self.peerIPs.indexOf(P2PNetwork.getWSIP(ws)), 1);
+			self.sockets.splice(self.sockets.indexOf(ws), 1);
+		}
 	}
 
 	/**
@@ -166,7 +192,6 @@ class P2PNetwork
 	 */
 	ask(ws, message)
 	{
-		console.log(message.pack());
 		ws.send(message.pack());
 	}
 
