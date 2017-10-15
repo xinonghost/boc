@@ -68,7 +68,7 @@ class P2PNetwork
 
 		self.server.on('connection', function(ws) { self.initConnection(ws, self); });
 
-		console.log('Listening P2P on port: ' + self.app.config.p2pPort);
+		console.log('[P2P] Listening P2P on port: ' + self.app.config.p2pPort);
 	}
 
 	/**

@@ -5,6 +5,8 @@
 'use strict'
 
 var Block = require('./Block');
+var DB = require('./DB');
+var Migration = require('./Migration');
 
 /**
  * Class Blockchain
@@ -13,6 +15,12 @@ class Blockchain
 {
 	constructor()
 	{
+		/** @var DB db DB connection. */
+		this.db = new DB();
+
+		/** @var Migration migration */
+		var migration = new Migration(this.db);
+		migration.up();
 	}
 
 	/**
@@ -31,6 +39,15 @@ class Blockchain
 	getBlocks()
 	{
 		return this.getGenesisBlock();
+	}
+
+	/**
+	 * Get latest block.
+	 *
+	 * @return Block
+	 */
+	getLatestBlock()
+	{
 	}
 }
 

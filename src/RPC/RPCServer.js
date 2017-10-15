@@ -40,7 +40,7 @@ class RPCServer
 
 		self.server.listen(
 			self.app.config.rpcPort,
-			function() { console.log('Listening RPC on port: ' + self.app.config.rpcPort); }
+			function() { console.log('[RPC] Listening RPC on port: ' + self.app.config.rpcPort); }
 		);
 	}
 
