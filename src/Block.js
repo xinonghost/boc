@@ -39,6 +39,8 @@ class Block
 
 		// Hesh of block header
 		this.hash = '';
+
+		this.getHash();
 	}
 
 	/**

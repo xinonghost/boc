@@ -33,7 +33,7 @@ class RPCServer
 		self.server.use(bodyParser.json());
 
 		self.server.get('/blocks', function(req, res) {
-			res.send(JSON.stringify(self.components.blockchain.getBlocks()));
+			res.send(JSON.stringify(self.app.blockchain.getBlocks()));
 		});
 
 		this.handleAddPeerRequest();
