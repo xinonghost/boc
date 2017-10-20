@@ -78,15 +78,15 @@ class P2PNetwork
 	 */
 	processQueue(id, self)
 	{
-		if (self.states[id] == undefined) {
-			self.states[id] = {
-				'isLocked': false,
-				'lastBlockHeight': 0,
-				'blocks': {}
-			};
-		}
+		// if (self.states[id] == undefined) {
+		// 	self.states[id] = {
+		// 		'isLocked': false,
+		// 		'lastBlockHeight': 0,
+		// 		'blocks': {}
+		// 	};
+		// }
 
-		if (self.states[id].isLocked) return;
+		// if (self.states[id].isLocked) return;
 
 		var data = self.syncQueue.take(id);
 		if (!data) return;
@@ -94,6 +94,12 @@ class P2PNetwork
 		switch (data.message.type) {
 			case Message.QUERY_LATEST:
 				console.log('[INFO] Latest block asked.');
+
+				var lastBlockResponse = new Message(Message.RESPONSE_LATEST, self.app.blockchain.getLatestBlock().getRaw());
+
+				self.answer(data.ws, lastBlockResponse);
+				
+				console.log('[INFO] Latest block answered.');
 				break;
 			case Message.RESPONSE_LATEST:
 				console.log('[INFO] Latest block response received.');

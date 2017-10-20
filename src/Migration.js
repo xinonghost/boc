@@ -58,6 +58,28 @@ class Migration
 
 		this.db.query("CREATE TABLE IF NOT EXISTS transaction (" + columns.join(',') + ") default charset utf8");
 	}
+
+	/**
+	 * Specify genesis block.
+	 *
+	 * @param src.Block block
+	 */
+	genesisBlockUp(block)
+	{
+		if (this.db.getLatestBlock() != null)
+			return;
+
+		var values = [
+			"'" + block.getHash() + "'",
+			"'" + block.getPreviousHash() + "'",
+			block.getHeight(),
+			block.getTime(),
+			block.getNonce(),
+			block.getVersion()
+		];
+
+		this.db.query("INSERT INTO block (hash, prev, height, createdAt, nonce, version) VALUES ("+values.join(',')+")");
+	}
 }
 
 module.exports = Migration;

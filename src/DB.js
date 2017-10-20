@@ -4,7 +4,7 @@
 
 'use strict'
 
-var mysql = require('mysql');
+var syncSql = require('sync-sql');
 
 /**
  * Class DB
@@ -14,20 +14,14 @@ class DB
 {
 	constructor()
 	{
-		/** @var object connection DB connection. */
-		this.connection = mysql.createConnection({
-			host: "localhost",
-			user: "root",
-			password: "mysql"
-		});
-
-		this.connection.connect(function(err) {
-			if (err) throw err;
-			console.log("[DB] Connection established.");
-		});
-
-		this.connection.query("CREATE DATABASE IF NOT EXISTS boc");
-		this.connection.query("use boc");
+		/** @var object config DB connection config. */
+		this.config = {
+			host: 'localhost',
+			user: 'root',
+			password: 'mysql',
+			database: 'boc',
+			port: '3306'
+		};
 	}
 
 	/**
@@ -38,7 +32,25 @@ class DB
 	 */
 	query(query)
 	{
-		return this.connection.query(query);
+		return syncSql.mysql(this.config, query);
+	}
+
+	/**
+	 * Get latest block.
+	 *
+	 * @return object
+	 */
+	getLatestBlock()
+	{
+		var result = this.query("SELECT * FROM block ORDER BY height LIMIT 1");
+
+		if (!result.success)
+			return null;
+
+		if (result.data.rows.length != 1)
+			return null;
+
+		return result.data.rows[0];
 	}
 }
 

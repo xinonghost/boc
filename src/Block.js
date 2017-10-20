@@ -81,6 +81,56 @@ class Block
 	}
 
 	/**
+	 * Get block time.
+	 *
+	 * @return int
+	 */
+	getTime()
+	{
+		return this.timestamp;
+	}
+
+	/**
+	 * Get block height.
+	 *
+	 * @return int
+	 */
+	getHeight()
+	{
+		return this.index;
+	}
+
+	/**
+	 * Get previous hash.
+	 *
+	 * @return string
+	 */
+	getPreviousHash()
+	{
+		return this.previousHash;
+	}
+
+	/**
+	 * Get block nonce.
+	 *
+	 * @return int
+	 */
+	getNonce()
+	{
+		return this.nonce;
+	}
+
+	/**
+	 * Get block version.
+	 *
+	 * @return int
+	 */
+	getVersion()
+	{
+		return this.version;
+	}
+
+	/**
 	 * Get transaction root.
 	 * @return string
 	 */
