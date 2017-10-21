@@ -15,3 +15,12 @@ exports.initialPeers = process.env.PEERS ? process.env.PEERS.split(',') : ['138.
 
 // Peers of network.
 exports.peers = [];
+
+// Mysql connection data
+exports.mysql = {
+	host: 'localhost',
+	user: 'root',
+	password: 'mysql',
+	database: 'boc',
+	port: '3306'
+};

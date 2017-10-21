@@ -7,6 +7,7 @@
 var express = require("express");
 var bodyParser = require('body-parser');
 var Response = require('./Response');
+var Wallet = require('../Wallet/Wallet');
 
 class RPCServer
 {
@@ -42,6 +43,12 @@ class RPCServer
 			self.app.config.rpcPort,
 			function() { console.log('[RPC] Listening RPC on port: ' + self.app.config.rpcPort); }
 		);
+
+		// Generate new key pair.
+		self.server.get('/getnewaddress', function(req, res) {
+			var wallet = new Wallet();
+			res.send(JSON.stringify(wallet.getNewKeyPair()));
+		});
 	}
 
 	/**
