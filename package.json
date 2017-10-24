@@ -11,7 +11,8 @@
     "express": "~4.11.1",
     "ws": "^1.1.0",
     "sync-sql": "^1.0.2",
-    "bitcoinjs-lib": "*"
+    "bitcoinjs-lib": "*",
+    "bitcoinjs-message": "*"
   },
   "engines": {
     "node": ">=4.3.2"

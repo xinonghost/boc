@@ -8,6 +8,7 @@ var express = require("express");
 var bodyParser = require('body-parser');
 var Response = require('./Response');
 var Wallet = require('../Wallet/Wallet');
+var bitcoinMessage = require('bitcoinjs-message');
 
 class RPCServer
 {
@@ -47,7 +48,13 @@ class RPCServer
 		// Generate new key pair.
 		self.server.get('/getnewaddress', function(req, res) {
 			var wallet = new Wallet();
-			res.send(JSON.stringify(wallet.getNewKeyPair()));
+			var pair = wallet.getNewKeyPair();
+
+			var privateKey = pair.d.toBuffer(32);
+			var message = 'This is an example of a signed message.';
+			var signature = bitcoinMessage.sign(message, privateKey, pair.compressed);
+
+			res.send(JSON.stringify(signature.toString('base64')));
 		});
 	}
 
