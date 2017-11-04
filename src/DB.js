@@ -52,6 +52,27 @@ class DB
 
 		return result.data.rows[0];
 	}
+
+	/**
+	 * Get latest block.
+	 *
+	 * @return object
+	 */
+	select(query)
+	{
+		var result = this.query(query);
+
+		if (!result.success)
+			return null;
+
+		if (result.data.rows.length < 1)
+			return null;
+
+		if (result.data.rows.length == 1)
+			return result.data.rows[0];
+
+		return result.data.rows;
+	}
 }
 
 module.exports = DB;

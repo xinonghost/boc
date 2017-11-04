@@ -37,6 +37,28 @@ class Wallet
 
 		return {'status':1, 'data':pair.getAddress()};
 	}
+
+	/**
+	 * Try to find issuer key pair in current wallet.
+	 *
+	 * @return object
+	 */
+	getIssuerPair()
+	{
+		var result = this.db.query("SELECT * FROM wallet_key WHERE address = '1LCRbQYyRi3F75jSSUdASgP2JLruoKH6bT'");
+
+		if (!result.success) {
+			return {'status':0, 'error':'DB request fail'};
+		}
+
+		if (result.data.rows.length == 0) {
+			return {'status':0, 'error':'Issuer key pair not found'};
+		}
+
+		var pair = bitcoin.ECPair.fromWIF(result.data.rows[0].priv);
+
+		return {'status':1, 'data':pair};
+	}
 }
 
 module.exports = Wallet;
