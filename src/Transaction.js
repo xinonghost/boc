@@ -6,6 +6,7 @@
 
 var DB = require('./DB');
 var CryptoJS = require("crypto-js");
+var Formatter = require('./Formatter');
 
 /**
  * Class Transaction
@@ -127,6 +128,23 @@ class Transaction
 			"INSERT INTO transaction (hash, type, blockId, indx, input, output, signature, createdAt) VALUES " +
 			"('"+this.data.hash+"', "+this.data.type+", 0, 0, '"+this.data.input+"', '"+this.data.output+"', '"+this.data.signature+"', "+this.data.time+")"
 		).success;
+	}
+
+	/**
+	 * Get transaction raw data.
+	 *
+	 * @return string
+	 */
+	getRaw()
+	{
+		var type = Formatter.formatHex(this.data.type, 2),
+			inputSize = Formatter.formatHex(this.data.input.length.toString(16), 4*2),
+			outputSize = Formatter.formatHex(this.data.output.length.toString(16), 1*2),
+			time = Formatter.formatHex(this.data.time.toString(16), 4*2);
+
+		var raw = type + this.data.hash + inputSize + this.data.input + outputSize + this.data.output +
+					time + this.data.signature;
+		return Formatter.stringToHex(raw);
 	}
 }
 

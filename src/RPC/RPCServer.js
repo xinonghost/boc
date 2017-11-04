@@ -79,12 +79,12 @@ class RPCServer
 			).toString('base64');
 
 			transaction.setSignature(signature);
-			var hash = transaction.generateHash();
+			var txid = transaction.generateHash();
 			var saved = transaction.save();
 
 			if (saved) {
-				// TODO: Brodacast transaction.
-				return res.send({'status':1, 'data':hash});
+				self.app.p2pNetwork.broadcastTransaction(transaction.getRaw());
+				return res.send({'status':1, 'data':txid});
 			} else {
 				return res.send({'status':0, 'error':'Cant save transaction'});
 			}

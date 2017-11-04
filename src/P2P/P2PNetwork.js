@@ -78,16 +78,6 @@ class P2PNetwork
 	 */
 	processQueue(id, self)
 	{
-		// if (self.states[id] == undefined) {
-		// 	self.states[id] = {
-		// 		'isLocked': false,
-		// 		'lastBlockHeight': 0,
-		// 		'blocks': {}
-		// 	};
-		// }
-
-		// if (self.states[id].isLocked) return;
-
 		var data = self.syncQueue.take(id);
 		if (!data) return;
 
@@ -115,7 +105,6 @@ class P2PNetwork
 	 */
 	initConnection(ws, self)
 	{
-		console.log(self.peerIPs);
 		if (self.peerIPs.indexOf(P2PNetwork.getWSIP(ws)) != -1) {
 			console.log('[INFO] Peer is already exists.');
 			ws.close();
@@ -248,6 +237,21 @@ class P2PNetwork
 		}
 
 		return false;
+	}
+
+	/**
+	 * Broadcast transaction.
+	 *
+	 * @param string rawTx
+	 */
+	broadcastTransaction(rawTx)
+	{
+		var self = this;
+		var message = new Message(3, rawTx);
+
+		self.sockets.forEach(function(ws) {
+			self.ask(ws, message);
+		});
 	}
 }
 

@@ -27,6 +27,23 @@ class Formatter
 
 		return hex;
 	}
+
+	/**
+	 * Convert string into hex view.
+	 *
+	 * @param string text
+	 * @return string
+	 */
+	static stringToHex(text)
+	{
+		var hex = '';
+
+		for (var i = 0; i < text.length; i++) {
+			hex += Formatter.formatHex(text.charCodeAt(i).toString(16), 1*2);
+		}
+
+		return hex;
+	}
 }
 
 module.exports = Formatter;
