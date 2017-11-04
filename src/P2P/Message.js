@@ -35,6 +35,14 @@ class Message
 	}
 
 	/**
+	 * Transaction message type.
+	 */
+	static get BROADCAST_TRANSACTION()
+	{
+		return 2;
+	}
+
+	/**
 	 * Unpack received message.
 	 * @param string pkg
 	 * @return Message

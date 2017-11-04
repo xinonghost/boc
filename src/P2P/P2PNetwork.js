@@ -83,16 +83,19 @@ class P2PNetwork
 
 		switch (data.message.type) {
 			case Message.QUERY_LATEST:
-				console.log('[INFO] Latest block asked.');
+				console.log('[P2P][INFO] Latest block asked.');
 
 				var lastBlockResponse = new Message(Message.RESPONSE_LATEST, self.app.blockchain.getLatestBlock().getRaw());
 
 				self.answer(data.ws, lastBlockResponse);
 				
-				console.log('[INFO] Latest block answered.');
+				console.log('[P2P][INFO] Latest block answered.');
 				break;
 			case Message.RESPONSE_LATEST:
-				console.log('[INFO] Latest block response received.');
+				console.log('[P2P][INFO] Latest block response received.');
+				break;
+			case Message.BROADCAST_TRANSACTION:
+				console.log('[P2P][INFO] Received new transaction.');
 				break;
 			default:
 				console.log('[WARNING] Undefined message type received.');
@@ -247,7 +250,7 @@ class P2PNetwork
 	broadcastTransaction(rawTx)
 	{
 		var self = this;
-		var message = new Message(3, rawTx);
+		var message = new Message(Message.BROADCAST_TRANSACTION, rawTx);
 
 		self.sockets.forEach(function(ws) {
 			self.ask(ws, message);
