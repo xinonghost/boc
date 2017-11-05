@@ -148,6 +148,30 @@ class Transaction
 		raw = Formatter.formatHex(raw.length.toString(16), 4*2) + raw;
 		return Formatter.stringToHex(raw);
 	}
+
+	/**
+	 * Get transaction from hex.
+	 *
+	 * @param string rawTx
+	 * @return object
+	 */
+	static fromRaw(rawTx)
+	{
+		var raw = Formatter.hexToString(rawTx);
+		var txSize = 0;
+
+		if (raw.length < 4*2) {
+			return {'status':0, 'error':'Raw length is too short'};
+		}
+		
+		txSize = parseInt(raw.substring(0, 4*2), 16);
+
+		if (raw.length < txSize - 4*2) {
+			return {'status':0, 'error':'Raw length is less then specified'};
+		}
+
+		return {'status':1, 'data':'Test'};
+	}
 }
 
 module.exports = Transaction;
