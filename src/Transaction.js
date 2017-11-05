@@ -159,6 +159,17 @@ class Transaction
 	{
 		var raw = Formatter.hexToString(rawTx);
 		var txSize = 0;
+		var inputSize = 0;
+		var outputSize = 0;
+
+		var txData = {
+			type: 0,
+			hash: '',
+			input: '',
+			output: '',
+			time: 0,
+			signature: ''
+		};
 
 		if (raw.length < 4*2) {
 			return {'status':0, 'error':'Raw length is too short'};
@@ -170,7 +181,31 @@ class Transaction
 			return {'status':0, 'error':'Raw length is less then specified'};
 		}
 
-		return {'status':1, 'data':'Test'};
+		var typeStart = 4*2;
+		txData.type = parseInt(raw.substring(typeStart, typeStart+1*2), 10);
+
+		var hashStart = typeStart+1*2;
+		txData.hash = raw.substring(hashStart, hashStart+64);
+
+		var inputSizeStart = hashStart+64;
+		inputSize = parseInt(raw.substring(inputSizeStart, inputSizeStart+4*2), 16);
+
+		var inputStart = inputSizeStart+4*2;
+		txData.input = raw.substring(inputStart, inputStart+inputSize);
+
+		var outputSizeStart = inputStart+inputSize;
+		outputSize = parseInt(raw.substring(outputSizeStart, outputSizeStart+1*2), 16);
+
+		var outputStart = outputSizeStart+1*2;
+		txData.output = raw.substring(outputStart, outputStart+outputSize);
+
+		var timeStart = outputStart+outputSize;
+		txData.time = parseInt(raw.substring(timeStart, timeStart+4*2), 16);
+
+		var signatureStart = timeStart+4*2;
+		txData.signature = raw.substring(signatureStart);
+
+		return {'status':1, 'data':txData};
 	}
 }
 
