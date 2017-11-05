@@ -7,6 +7,7 @@
 var WebSocket = require("ws");
 var Message = require('./Message');
 var Queue = require('./Queue');
+var Formatter = require('./../Formatter');
 
 /**
  * Class P2PNetwork
@@ -96,7 +97,7 @@ class P2PNetwork
 				break;
 			case Message.BROADCAST_TRANSACTION:
 				console.log('[P2P][INFO] Received new transaction.');
-				console.log(data.message);
+				console.log(Formatter.hexToString(data.message.data));
 				break;
 			default:
 				console.log('[P2P][WARNING] Undefined message type received.');

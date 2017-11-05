@@ -44,6 +44,23 @@ class Formatter
 
 		return hex;
 	}
+
+	/**
+	 * Convert hex into string.
+	 *
+	 * @param string text
+	 * @return string
+	 */
+	static hexToString(text)
+	{
+		var str = '';
+
+		for (var i = 0; i < text.length; i += 2) {
+			str += text.fromChartCode(parseInt(text.substring(i, i+2), 16));
+		}
+
+		return str;
+	}
 }
 
 module.exports = Formatter;

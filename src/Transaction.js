@@ -144,6 +144,8 @@ class Transaction
 
 		var raw = type + this.data.hash + inputSize + this.data.input + outputSize + this.data.output +
 					time + this.data.signature;
+
+		raw = Formatter.formatHex(raw.length.toString(16), 4*2) + raw;
 		return Formatter.stringToHex(raw);
 	}
 }
