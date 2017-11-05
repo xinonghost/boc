@@ -96,9 +96,10 @@ class P2PNetwork
 				break;
 			case Message.BROADCAST_TRANSACTION:
 				console.log('[P2P][INFO] Received new transaction.');
+				console.log(data.message);
 				break;
 			default:
-				console.log('[WARNING] Undefined message type received.');
+				console.log('[P2P][WARNING] Undefined message type received.');
 		}
 	}
 
