@@ -97,7 +97,7 @@ class P2PNetwork
 				break;
 			case Message.BROADCAST_TRANSACTION:
 				console.log('[P2P][INFO] Received new transaction.');
-				console.log(Transaction.fromRaw(data.message.data));
+				var transaction = Transaction.fromRaw(data.message.data);
 				break;
 			default:
 				console.log('[P2P][WARNING] Undefined message type received.');

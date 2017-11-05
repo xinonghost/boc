@@ -25,7 +25,7 @@ class Transaction
 			'type': 0,
 			'input': '',
 			'output': '',
-			'time': +(new Date()),
+			'time': Math.round(+(new Date()) / 1000),
 			'signature': ''
 		};
 	}
