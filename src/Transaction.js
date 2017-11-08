@@ -235,9 +235,12 @@ class Transaction
 			.setTime(txData.signature)
 			.setSignature(txData.signature);
 
+
 		if (transaction.generateHash() == txData.hash) {
+			console.log(transaction);
 			return {'status':1, 'data':transaction};
 		} else {
+			console.log(transaction);
 			return {'status':0, 'error':'Transaction is damaged'};
 		}
 	}
