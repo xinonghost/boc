@@ -42,12 +42,8 @@ class Transaction
 		if (input.type == 1) { // Contract
 			this.data.type = 1;
 			this.data.input = new Buffer(input.data).toString('base64');
-			return {'status':1};
 		} else if (input.type == 0) { // Transfer
 			this.data.input = input.data;
-			return {'status':1};
-		} else { // Undefined input
-			return {'statuss':0, 'error':'Undefined input provided'};
 		}
 
 		return this;
