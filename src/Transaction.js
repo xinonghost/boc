@@ -236,7 +236,7 @@ class Transaction
 		transaction.setType(txData.type)
 			.setInput(txData.input)
 			.setOutput(txData.output)
-			.setTime(txData.signature);
+			.setTime(txData.signature)
 			.setSignature(txData.signature);
 
 		if (transaction.generateHash() == txData.hash) {
