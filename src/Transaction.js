@@ -230,7 +230,7 @@ class Transaction
 		var transaction = new Transaction();
 
 		transaction.setType(txData.type)
-			.setInput(txData.input)
+			.setInput({"type":txData.type, "data":txData.input})
 			.setOutput(txData.output)
 			.setTime(txData.signature)
 			.setSignature(txData.signature);
