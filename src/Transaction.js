@@ -49,6 +49,8 @@ class Transaction
 		} else { // Undefined input
 			return {'statuss':0, 'error':'Undefined input provided'};
 		}
+
+		return this;
 	}
 
 	/**
@@ -60,7 +62,31 @@ class Transaction
 	setOutput(output)
 	{
 		this.data.output = output;
-		return {'status':1};
+		return this;
+	}
+
+	/**
+	 * Set time of transaction.
+	 *
+	 * @param int time
+	 * @return object
+	 */
+	setTime(time)
+	{
+		this.data.time = time;
+		return this;
+	}
+
+	/**
+	 * Set type of transaction.
+	 *
+	 * @param int time
+	 * @return object
+	 */
+	setType(type)
+	{
+		this.data.type = type;
+		return this;
 	}
 
 	/**
@@ -205,7 +231,19 @@ class Transaction
 		var signatureStart = timeStart+4*2;
 		txData.signature = raw.substring(signatureStart);
 
-		return {'status':1, 'data':txData};
+		var transaction = new Transaction();
+
+		transaction.setType(txData.type)
+			.setInput(txData.input)
+			.setOutput(txData.output)
+			.setTime(txData.signature);
+			.setSignature(txData.signature);
+
+		if (transaction.generateHash() == txData.hash) {
+			return {'status':1, 'data':transaction};
+		} else {
+			return {'status':0, 'error':'Transaction is damaged'};
+		}
 	}
 }
 
