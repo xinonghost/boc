@@ -230,7 +230,7 @@ class Transaction
 		var transaction = new Transaction();
 
 		transaction.setType(txData.type)
-			.setInput({"type":txData.type, "data":new Buffer(txData.input).toString('ascii')})
+			.setInput({"type":txData.type, "data":Buffer.from(txData.input, 'base64')})
 			.setOutput(txData.output)
 			.setTime(txData.time)
 			.setSignature(txData.signature);
