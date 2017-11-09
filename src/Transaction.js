@@ -143,7 +143,7 @@ class Transaction
 	save()
 	{
 		if (this.findByHash(this.data.hash) !== null || this.findByInput(this.data.input) !== null) {
-			return true;
+			return false;
 		}
 
 		return this.db.query(
