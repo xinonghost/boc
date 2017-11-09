@@ -101,6 +101,7 @@ class Transaction
 	setSignature(signature)
 	{
 		this.data.signature = signature;
+		return this;
 	}
 
 	/**
@@ -121,7 +122,7 @@ class Transaction
 	 * @param string hash
 	 * @return object
 	 */
-	findByHash(hash)
+	static findByHash(hash)
 	{
 		return this.db.select("SELECT hash FROM transaction WHERE hash = '"+hash+"'");
 	}
@@ -132,7 +133,7 @@ class Transaction
 	 * @param string input
 	 * @return object
 	 */
-	findByInput(input)
+	static findByInput(input)
 	{
 		return this.db.select("SELECT input FROM transaction WHERE input = '"+input+"'");
 	}
@@ -242,6 +243,31 @@ class Transaction
 			console.log(transaction);
 			return {'status':0, 'error':'Transaction is damaged'};
 		}
+	}
+
+	static getAllUnconfirmed()
+	{
+		var db = new DB();
+
+		var transactions = db.select("SELECT * FROM transaction WHERE blockId = 0");
+
+		if (!transactions || transactions.length == 0) {
+			return [];
+		}
+
+		transactions = transactions.map(function(e) {
+			var transaction = new Transaction();
+
+			transaction.setType(e.type)
+				.setInput({"type":e.type, "data":e.input})
+				.setOutput(e.output)
+				.setTime(e.createdAt)
+				.setSignature(e.signature).generateHash();
+
+			return transaction.getRaw();
+		});
+
+		return transactions;
 	}
 }
 
