@@ -82,8 +82,6 @@ class RPCServer
 			var txid = transaction.generateHash();
 			var saved = transaction.save();
 
-			console.log(transaction);
-
 			if (saved) {
 				self.app.p2pNetwork.broadcastTransaction(transaction.getRaw());
 				return res.send({'status':1, 'data':txid});

@@ -98,16 +98,7 @@ class P2PNetwork
 			case Message.BROADCAST_TRANSACTION:
 				console.log('[P2P][INFO] Received new transaction.');
 				
-				var transaction = Transaction.fromRaw(data.message.data);
-				if (!transaction.status) {
-					console.log('[P2P][WARNING] Transaction error: ' + transaction.error);
-					break;
-				}
-
-				if (transaction.data.save()) {
-					console.log('[P2P][INFO] Broadcasting transaction.');
-					self.broadcastTransaction(transaction.data.getRaw());
-				}
+				self.receiveTransaction(data.message.data);
 				
 				break;
 			default:
@@ -268,6 +259,29 @@ class P2PNetwork
 		self.sockets.forEach(function(ws) {
 			self.ask(ws, message);
 		});
+	}
+
+	/**
+	 * Receive transaction.
+	 *
+	 * @param string rawTx
+	 * @return object
+	 */
+	receiveTransaction(rawTx)
+	{
+		var self = this;
+		var transaction = Transaction.fromRaw(rawTx);
+		
+		if (!transaction.status) {
+			console.log('[P2P][WARNING] Transaction error: ' + transaction.error);
+			return {'status':0, 'error':transaction.error};
+		}
+
+		if (transaction.data.save()) {
+			console.log('[P2P][INFO] Broadcasting transaction.');
+			self.broadcastTransaction(transaction.data.getRaw());
+			return {'status':1};
+		}
 	}
 }
 
