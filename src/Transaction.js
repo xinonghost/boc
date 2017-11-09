@@ -230,9 +230,9 @@ class Transaction
 		var transaction = new Transaction();
 
 		transaction.setType(txData.type)
-			.setInput({"type":txData.type, "data":txData.input})
+			.setInput({"type":txData.type, "data":txData.input.toString('ascii')})
 			.setOutput(txData.output)
-			.setTime(txData.signature)
+			.setTime(txData.time)
 			.setSignature(txData.signature);
 
 
