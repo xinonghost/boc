@@ -269,6 +269,16 @@ class Block
 	{
 		return [];
 	}
+
+	/**
+	 * Save block into DB.
+	 *
+	 * @return boolean
+	 */
+	save()
+	{
+		return false;
+	}
 }
 
 module.exports = Block;

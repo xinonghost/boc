@@ -269,6 +269,37 @@ class Transaction
 
 		return transactions;
 	}
+
+	/**
+	 * Get block transactions.
+	 *
+	 * @param int blockId
+	 * @return Transaction[]
+	 */
+	static getForBlock(blockId)
+	{
+		var db = new DB();
+
+		var transactions = db.select("SELECT * FROM transaction WHERE blockId = " + blockId);
+
+		if (!transactions || transactions.length == 0) {
+			return [];
+		}
+
+		transactions = transactions.map(function(e) {
+			var transaction = new Transaction();
+
+			transaction.setType(e.type)
+				.setInput({"type":e.type, "data":e.input})
+				.setOutput(e.output)
+				.setTime(e.createdAt)
+				.setSignature(e.signature).generateHash();
+
+			return transaction.getRaw();
+		});
+
+		return transactions;
+	}
 }
 
 module.exports = Transaction;

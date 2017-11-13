@@ -5,6 +5,7 @@
 'use strict'
 
 var Block = require('./Block');
+var Transaction = require('./Transaction');
 var DB = require('./DB');
 var Migration = require('./Migration');
 
@@ -60,11 +61,13 @@ class Blockchain
 		if (!blockData)
 			return null;
 
+		var payloadData = this.getBlockPayload(Transaction.getForBlock(blockData.id));
+
 		var block = new Block(
 			blockData.height,
 			blockData.createdAt,
 			blockData.prev,
-			[],
+			payloadData,
 			blockData.nonce
 		);
 
@@ -72,13 +75,47 @@ class Blockchain
 	}
 
 	/**
+	 * Get payload data for block.
+	 *
+	 * @param Transaction[] transactions
+	 * @return string
+	 */
+	getBlockPayload(transactions)
+	{
+		txs = '';
+		if (transactions.length == 0) {
+			return '';
+		}
+
+		transactions.map(function(e) {
+			var size = e.length;
+			txs += Formatter.formatHex(size, 8) + e;
+		});
+
+		var size = txs.length;
+		txs = Formatter.formatHex(size, 16) + txs;
+
+		return txs;
+	}
+
+	/**
 	 * Save block into DB.
 	 *
 	 * @param Block block
-	 * @return objects
+	 * @return boolean
 	 */
 	saveBlock(block)
 	{
+		var lastBlock = this.getLatestBlock();
+		if (block.previousHash != lastBlock.getHash()) {
+			return false;
+		}
+
+		if (block.index-1 != lastBlock.index) {
+			return false;
+		}
+
+		return block.save();
 	}
 
 	/**
@@ -88,7 +125,7 @@ class Blockchain
 	 */
 	validateBlock(block)
 	{
-		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('00001F00', 16);
+		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('0000FFFF', 16);
 	}
 }
 

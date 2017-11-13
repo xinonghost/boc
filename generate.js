@@ -39,7 +39,7 @@ do {
 	}
 
 	nonce++;
-	block = new Block(lastBlock.index, time, lastBlock.getHash(), txs, nonce);
+	block = new Block(lastBlock.index+1, time, lastBlock.getHash(), txs, nonce);
 
 	if (blockchain.validateBlock(block)) {
 		var t1 = +(new Date())/1000;
