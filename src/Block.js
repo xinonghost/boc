@@ -59,7 +59,7 @@ class Block
 			timestampHex = Formatter.formatHex(this.timestamp.toString(18), 4*2),
 			nonce = Formatter.formatHex(this.nonce, 4*2);
 
-		this.raw = versionSize + versionHex + indexSize + indexHex + timestampHex + this.previousHash + nonce;
+		this.raw = versionSize + versionHex + indexSize + indexHex + timestampHex + this.previousHash + nonce + this.data;
 		return this.raw;
 	}
 
@@ -138,7 +138,7 @@ class Block
 	 */
 	getTxRoot()
 	{
-		return CryptoJS.SHA256(this.data.join('')).toString();
+		return CryptoJS.SHA256(this.data).toString();
 	}
 
 	/**
