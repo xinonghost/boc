@@ -25,6 +25,33 @@ if (transactions.length == 0) {
 
 var lastBlock = blockchain.getLatestBlock();
 
-var block = new Block(lastBlock.index, Math.round(+(new Date())/1000), lastBlock.getHash(), txs, 0);
+var block = null;
+var nonce = -1;
+var time = Math.round(+(new Date())/1000);
+var t0 = +(new Date())/1000;
+var history = [];
 
-console.log(block.getRaw());
+do {
+	time = Math.round(+(new Date())/1000);
+
+	if (nonce > 1000000) {
+		nonce = -1;
+	}
+
+	nonce++;
+	block = new Block(lastBlock.index, time, lastBlock.getHash(), txs, nonce);
+
+	if (blockchain.validateBlock(block)) {
+		var t1 = +(new Date())/1000;
+		history.push(t1 - t0);
+
+		console.log(block.getHash(), (t1 - t0), avg(history));
+		var t0 = +(new Date())/1000;
+	}
+} while (true);
+
+function avg(values)
+{
+	var total = values.reduce(function(prev, e) { return prev + e; });
+	return total / values.length;
+}

@@ -80,6 +80,16 @@ class Blockchain
 	saveBlock(block)
 	{
 	}
+
+	/**
+	 * Validate block.
+	 *
+	 * @param Block block
+	 */
+	validateBlock(block)
+	{
+		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('00001F00', 16);
+	}
 }
 
 module.exports = Blockchain;
