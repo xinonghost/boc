@@ -33,7 +33,7 @@ class Block
 		this.data = data;
 
 		// List of transactions
-		this.txs = [];
+		this.txs = Block.parseTransactions(this.data);
 
 		// Raw data of block
 		this.raw = '';
@@ -69,7 +69,7 @@ class Block
 	 * Get hash of block.
 	 * @return string
 	 */
-	getHash(debug = false)
+	getHash(debug)
 	{
 
 		var data = Formatter.formatHex(this.index) +
@@ -262,7 +262,6 @@ class Block
 
 		block.version = iVersion;
 		block.raw = raw;
-		block.txs = Block.parseTransactions(block.data);
 		block.getHash();
 
 		return block;
