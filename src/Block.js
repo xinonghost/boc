@@ -7,6 +7,7 @@
 var CryptoJS = require("crypto-js");
 var Exception = require('./Exception');
 var Formatter = require('./Formatter');
+var Transaction = require('./Transaction');
 
 /**
  * Class Block
@@ -28,8 +29,11 @@ class Block
 		// Nonce of block
 		this.nonce = nonce || 0;
 
-		// List of transactions
+		// Block payload data
 		this.data = data;
+
+		// List of transactions
+		this.txs = [];
 
 		// Raw data of block
 		this.raw = '';
@@ -39,8 +43,6 @@ class Block
 
 		// Hesh of block header
 		this.hash = '';
-
-		this.getHash();
 	}
 
 	/**
@@ -56,7 +58,7 @@ class Block
 			versionSize = Formatter.formatHex(versionHex.length / 2),
 			indexHex = Formatter.formatHex(this.index.toString(16)),
 			indexSize = Formatter.formatHex(indexHex.length / 2),
-			timestampHex = Formatter.formatHex(this.timestamp.toString(18), 4*2),
+			timestampHex = Formatter.formatHex(this.timestamp.toString(16), 4*2),
 			nonce = Formatter.formatHex(this.nonce, 4*2);
 
 		this.raw = versionSize + versionHex + indexSize + indexHex + timestampHex + this.previousHash + nonce + this.data;
@@ -67,16 +69,22 @@ class Block
 	 * Get hash of block.
 	 * @return string
 	 */
-	getHash()
+	getHash(debug = false)
 	{
-		if (this.hash == '') {
-			this.hash = CryptoJS.SHA256(
-				Formatter.formatHex(this.index) +
+
+		var data = Formatter.formatHex(this.index) +
 				Formatter.formatHex(this.timestamp) +
 				Formatter.formatHex(this.previousHash) +
 				this.getTxRoot() +
-				Formatter.formatHex(this.nonce)
-			).toString();
+				Formatter.formatHex(this.nonce);
+		
+		if (debug) {
+			console.log(this.hash);
+			console.log(typeof data, data);
+		}
+
+		if (this.hash == '') {
+			this.hash = CryptoJS.SHA256(data).toString();
 		}
 
 		return this.hash;
@@ -246,15 +254,16 @@ class Block
 			throw new Exception('Raw string have not enought data for nonce', Exception.INVALID);
 
 		sNonce = raw.substring(iNonceOffset, iNonceOffset + 8);
-		iNonce = parseInt(sNonce, 16);
+		iNonce = parseInt(sNonce);
 		if (iNonce < 0)
 			throw new Exception('Nonce value cannot be negative', Exception.INVALID);
 
-		var block = new Block(iIndex, sPrevHash, iTimestamp, [], iNonce);
+		var block = new Block(iIndex, iTimestamp, sPrevHash, raw.substring(iNonceOffset + 8), iNonce);
 
 		block.version = iVersion;
 		block.raw = raw;
-		block.data = Block.parseTransactions(raw.substring(iNonceOffset + 8));
+		block.txs = Block.parseTransactions(block.data);
+		block.getHash();
 
 		return block;
 	}
@@ -267,7 +276,36 @@ class Block
 	 */
 	static parseTransactions(raw)
 	{
-		return [];
+		if (raw.length < 8) {
+			return '';
+		}
+
+		var size = parseInt(raw.substring(0, 16));
+
+		if (size < 1 || raw.substring(16).length < size) {
+			return '';
+		}
+
+		var txs = raw.substring(16);
+		var transactions = [];
+		while (txs.length > 0) {
+			var txSize = parseInt(txs.substring(0, 8));
+
+			if (txSize < 1 || txs.substring(8, 8+txSize).length != txSize) {
+				break;
+			}
+
+			var tx = Transaction.fromRaw(txs.substring(8, 8+txSize));
+			if (tx.status) {
+				transactions.push(tx.data);
+			} else {
+				break;
+			}
+
+			txs = txs.substring(8+txSize);
+		}
+
+		return transactions;
 	}
 
 	/**

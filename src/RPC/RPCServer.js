@@ -10,6 +10,7 @@ var Response = require('./Response');
 var Wallet = require('../Wallet/Wallet');
 var Transaction = require('../Transaction');
 var bitcoinMessage = require('bitcoinjs-message');
+var Block = require('./../Block');
 
 class RPCServer
 {
@@ -52,6 +53,7 @@ class RPCServer
 			res.send(JSON.stringify(wallet.getNewKeyPair()));
 		});
 
+		// Create new contract
 		self.server.post('/createcontract', function(req, res) {
 			if (!req.body.contract) {
 				return res.send(JSON.stringify({'status':0, 'error':'Contract content not provided'}));
@@ -88,6 +90,30 @@ class RPCServer
 			} else {
 				return res.send({'status':0, 'error':'Cant save transaction'});
 			}
+		});
+
+		// Submit new block.
+		self.server.post('/submitblock', function(req, res) {
+			if (!req.body.block) {
+				return res.send(JSON.stringify({'status':0, 'error':'Block data not provided'}));
+			}
+
+			try {
+				var block = Block.parseRawBlock(req.body.block);
+			} catch (e) {
+				return res.send(JSON.stringify({'status':0, 'error':e.message}));
+			}
+
+			if (!self.components.blockchain.validateBlock(block)) {
+				return res.send(JSON.stringify({'status':0, 'error':'Invalid block received'}));
+			}
+
+
+			if (!block.save()) {
+				return res.send(JSON.stringify({'status':0, 'error':'Cant save the block'}));
+			}
+
+			return res.send(JSON.stringify({'status':1}));
 		});
 	}
 

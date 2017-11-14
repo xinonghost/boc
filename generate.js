@@ -46,6 +46,7 @@ do {
 		history.push(t1 - t0);
 
 		console.log(block.getHash(), (t1 - t0), avg(history));
+		console.log(block.getRaw());
 		var t0 = +(new Date())/1000;
 	}
 } while (true);

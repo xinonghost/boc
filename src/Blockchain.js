@@ -82,7 +82,7 @@ class Blockchain
 	 */
 	getBlockPayload(transactions)
 	{
-		txs = '';
+		var txs = '';
 		if (transactions.length == 0) {
 			return '';
 		}
