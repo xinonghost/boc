@@ -43,6 +43,22 @@ class Message
 	}
 
 	/**
+	 * Certain block request.
+	 */
+	static get ASK_CERTAIN_BLOCK()
+	{
+		return 3;
+	}
+
+	/**
+	 * Certain block request.
+	 */
+	static get RESPONSE_CERTAIN_BLOCK()
+	{
+		return 4;
+	}
+
+	/**
 	 * Unpack received message.
 	 * @param string pkg
 	 * @return Message

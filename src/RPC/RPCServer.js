@@ -98,22 +98,7 @@ class RPCServer
 				return res.send(JSON.stringify({'status':0, 'error':'Block data not provided'}));
 			}
 
-			try {
-				var block = Block.parseRawBlock(req.body.block);
-			} catch (e) {
-				return res.send(JSON.stringify({'status':0, 'error':e.message}));
-			}
-
-			if (!self.components.blockchain.validateBlock(block)) {
-				return res.send(JSON.stringify({'status':0, 'error':'Invalid block received'}));
-			}
-
-
-			if (!block.save()) {
-				return res.send(JSON.stringify({'status':0, 'error':'Cant save the block'}));
-			}
-
-			return res.send(JSON.stringify({'status':1, 'data':self.components.blockchain.getLatestBlock()}));
+			return res.send(JSON.stringify(self.app.blockchain.connectBlock(req.body.block)));
 		});
 	}
 

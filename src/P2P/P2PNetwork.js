@@ -101,6 +101,31 @@ class P2PNetwork
 				console.log(localLast);
 				console.log(remoteLast);
 
+				if (localLast.index < remoteLast.index) {
+					var certainBlock = new Message(Message.ASK_CERTAIN_BLOCK, localLast.index+1);
+					self.ask(data.ws, certainBlock);
+				}
+
+				break;
+			case Message.RESPONSE_CERTAIN_BLOCK:
+				console.log('[P2P][INFO] Received certain block.');
+
+				var localLast = self.app.blockchain.getLatestBlock();
+				try {
+					var remoteLast = Block.parseRawBlock(data.message.data);
+				} catch (e) {
+					console.log('[P2P][ERROR] Cant parse block');
+				}
+
+				if (localLast.index+1 == remoteLast.index) {
+					var result = self.app.blockchain.connectBlock(data.message.data);
+					if (result.status) {
+						console.log('Success');
+					} else {
+						console.log('Fail');
+					}
+				}
+				
 				break;
 			case Message.BROADCAST_TRANSACTION:
 				console.log('[P2P][INFO] Received new transaction.');

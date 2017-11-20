@@ -130,6 +130,31 @@ class Blockchain
 			&& this.getLatestBlock().index+1 == block.index
 			&& this.getLatestBlock().getHash() == block.previousHash;
 	}
+
+	/**
+	 * Try to add block to the blockchain.
+	 *
+	 * @param string blockData
+	 * @return object
+	 */
+	connectBlock(blockData)
+	{
+		try {
+			var block = Block.parseRawBlock(blockData);
+		} catch (e) {
+			return {'status':0, 'error':e.message};
+		}
+
+		if (!this.validateBlock(block)) {
+			return {'status':0, 'error':e.message};
+		}
+
+		if (!block.save()) {
+			return {'status':0, 'error':'Cant save the block'};
+		}
+
+		return {'status':1, 'data':this.getLatestBlock()};
+	}
 }
 
 module.exports = Blockchain;
