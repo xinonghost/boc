@@ -98,9 +98,6 @@ class P2PNetwork
 				var localLast = self.app.blockchain.getLatestBlock();
 				var remoteLast = Block.parseRawBlock(data.message.data);
 
-				console.log(localLast);
-				console.log(remoteLast);
-
 				if (localLast.index < remoteLast.index) {
 					var certainBlock = new Message(Message.ASK_CERTAIN_BLOCK, localLast.index+1);
 					self.ask(data.ws, certainBlock);
@@ -133,9 +130,11 @@ class P2PNetwork
 				if (localLast.index+1 == remoteLast.index) {
 					var result = self.app.blockchain.connectBlock(data.message.data);
 					if (result.status) {
-						console.log('Success');
+						console.log('[P2P][SUCCESS] Block connected.');
+						var message = new Message(Message.QUERY_LATEST);
+						self.ask(ws, message);
 					} else {
-						console.log('Fail');
+						console.log('[P2P][ERROR] Fail to connect block');
 					}
 				}
 				
