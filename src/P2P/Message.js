@@ -59,6 +59,14 @@ class Message
 	}
 
 	/**
+	 * Block message type.
+	 */
+	static get BROADCAST_BLOCK()
+	{
+		return 5;
+	}
+
+	/**
 	 * Unpack received message.
 	 * @param string pkg
 	 * @return Message

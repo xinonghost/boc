@@ -145,6 +145,26 @@ class P2PNetwork
 				self.receiveTransaction(data.message.data);
 				
 				break;
+			case Message.BROADCAST_BLOCK:
+				console.log('[P2P][INFO] Received new block.');
+				
+				var localLast = self.app.blockchain.getLatestBlock();
+				try {
+					var remoteLast = Block.parseRawBlock(data.message.data);
+				} catch (e) {
+					console.log('[P2P][ERROR] Cant parse block');
+				}
+
+				if (localLast.index+1 == remoteLast.index) {
+					var result = self.app.blockchain.connectBlock(data.message.data);
+					if (result.status) {
+						console.log('[P2P][SUCCESS] Block connected.');
+					} else {
+						console.log('[P2P][ERROR] Fail to connect block');
+					}
+				}
+				
+				break;
 			default:
 				console.log('[P2P][WARNING] Undefined message type received.');
 		}
@@ -300,6 +320,21 @@ class P2PNetwork
 	{
 		var self = this;
 		var message = new Message(Message.BROADCAST_TRANSACTION, rawTx);
+
+		self.sockets.forEach(function(ws) {
+			self.ask(ws, message);
+		});
+	}
+
+	/**
+	 * Broadcast transaction.
+	 *
+	 * @param string rawData
+	 */
+	broadcastBlock(rawData)
+	{
+		var self = this;
+		var message = new Message(Message.BROADCAST_BLOCK, rawData);
 
 		self.sockets.forEach(function(ws) {
 			self.ask(ws, message);

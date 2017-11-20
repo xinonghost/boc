@@ -98,7 +98,13 @@ class RPCServer
 				return res.send(JSON.stringify({'status':0, 'error':'Block data not provided'}));
 			}
 
-			return res.send(JSON.stringify(self.app.blockchain.connectBlock(req.body.block)));
+			var res = self.app.blockchain.connectBlock(req.body.block);
+
+			if (res.status) {
+				//
+			}
+
+			return res.send(JSON.stringify(res));
 		});
 	}
 
