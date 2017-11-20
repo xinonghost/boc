@@ -42,7 +42,7 @@ class DB
 	 */
 	getLatestBlock()
 	{
-		var result = this.query("SELECT * FROM block ORDER BY height LIMIT 1");
+		var result = this.query("SELECT * FROM block ORDER BY height DESC LIMIT 1");
 
 		if (!result.success)
 			return null;

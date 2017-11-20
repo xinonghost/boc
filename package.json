@@ -12,7 +12,8 @@
     "ws": "^1.1.0",
     "sync-sql": "^1.0.2",
     "bitcoinjs-lib": "*",
-    "bitcoinjs-message": "*"
+    "bitcoinjs-message": "*",
+    "sync-request":"*"
   },
   "engines": {
     "node": ">=4.3.2"

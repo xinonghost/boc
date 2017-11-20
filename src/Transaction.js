@@ -124,7 +124,8 @@ class Transaction
 	 */
 	static findByHash(hash)
 	{
-		return this.db.select("SELECT hash FROM transaction WHERE hash = '"+hash+"'");
+		var db = new DB();
+		return db.select("SELECT hash FROM transaction WHERE hash = '"+hash+"'");
 	}
 
 	/**
@@ -135,7 +136,8 @@ class Transaction
 	 */
 	static findByInput(input)
 	{
-		return this.db.select("SELECT input FROM transaction WHERE input = '"+input+"'");
+		var db = new DB();
+		return db.select("SELECT input FROM transaction WHERE input = '"+input+"'");
 	}
 
 	/**
@@ -143,7 +145,7 @@ class Transaction
 	 */
 	save()
 	{
-		if (this.findByHash(this.data.hash) !== null || this.findByInput(this.data.input) !== null) {
+		if (Transaction.findByHash(this.data.hash) !== null || Transaction.findByInput(this.data.input) !== null) {
 			return false;
 		}
 
@@ -236,7 +238,6 @@ class Transaction
 			.setTime(txData.time)
 			.setSignature(txData.signature);
 
-
 		if (transaction.generateHash() == txData.hash) {
 			return {'status':1, 'data':transaction};
 		} else {
@@ -253,19 +254,22 @@ class Transaction
 
 		if (!transactions || transactions.length == 0) {
 			return [];
+		} else if (!Array.isArray(transactions)) {
+			transactions = [transactions];
 		}
 
 		transactions = transactions.map(function(e) {
 			var transaction = new Transaction();
 
 			transaction.setType(e.type)
-				.setInput({"type":e.type, "data":e.input})
+				.setInput({"type":e.type, "data":Buffer.from(e.input, 'base64')})
 				.setOutput(e.output)
 				.setTime(e.createdAt)
 				.setSignature(e.signature).generateHash();
 
 			return transaction.getRaw();
 		});
+
 
 		return transactions;
 	}
@@ -284,13 +288,15 @@ class Transaction
 
 		if (!transactions || transactions.length == 0) {
 			return [];
+		} else if (!Array.isArray(transactions)) {
+			transactions = [transactions];
 		}
 
 		transactions = transactions.map(function(e) {
 			var transaction = new Transaction();
 
 			transaction.setType(e.type)
-				.setInput({"type":e.type, "data":e.input})
+				.setInput({"type":e.type, "data":Buffer.from(e.input, 'base64')})
 				.setOutput(e.output)
 				.setTime(e.createdAt)
 				.setSignature(e.signature).generateHash();

@@ -113,7 +113,7 @@ class RPCServer
 				return res.send(JSON.stringify({'status':0, 'error':'Cant save the block'}));
 			}
 
-			return res.send(JSON.stringify({'status':1}));
+			return res.send(JSON.stringify({'status':1, 'data':self.components.blockchain.getLatestBlock()}));
 		});
 	}
 

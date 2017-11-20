@@ -8,6 +8,7 @@ var CryptoJS = require("crypto-js");
 var Exception = require('./Exception');
 var Formatter = require('./Formatter');
 var Transaction = require('./Transaction');
+var DB = require('./DB');
 
 /**
  * Class Block
@@ -304,6 +305,7 @@ class Block
 			txs = txs.substring(8+txSize);
 		}
 
+
 		return transactions;
 	}
 
@@ -314,7 +316,44 @@ class Block
 	 */
 	save()
 	{
-		return false;
+		var db = new DB();
+
+		var result = db.query("INSERT INTO block (hash, prev, height, createdAt, nonce, version) VALUES ('"+this.getHash()+"', '"+this.previousHash+"', "+this.index+", "+this.timestamp+", "+this.nonce+", "+this.version+")");
+
+		if (!result.success) {
+			return false;
+		}
+		
+		var block = db.select("SELECT * FROM block where hash = '"+this.getHash()+"'");
+
+		if (this.txs.length == 0) {
+			return true;
+		}
+
+		var success = true;
+		var index = -1;
+		this.txs.map(function(e) {
+			index++;
+			var tx = db.select("SELECT * FROM transaction WHERE hash = '"+e.generateHash()+"'");
+
+			if (!tx) {
+				var result = db.query("INSERT INTO transaction (hash, type, blockId, indx, input, output, signature, createdAt) VALUES ('"+e.generateHash()+"', "+e.data.type+", "+block.id+", "+index+", '"+e.data.input+"', '"+e.data.output+"', '"+e.data.signature+"', "+e.data.time+")");
+				if (!result.success) {
+					success = false;
+					return e;
+				}
+			} else if (tx.blockId != block.id) {
+				var result = db.query("UPDATE transaction SET blockId = "+block.id+" WHERE hash = '"+tx.hash+"'");
+				if (!result.success) {
+					success = false;
+					return e;
+				}
+			}
+			
+			return null;
+		});
+
+		return success;
 	}
 }
 

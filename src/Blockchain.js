@@ -8,6 +8,7 @@ var Block = require('./Block');
 var Transaction = require('./Transaction');
 var DB = require('./DB');
 var Migration = require('./Migration');
+var Formatter = require('./Formatter');
 
 /**
  * Class Blockchain
@@ -20,7 +21,7 @@ class Blockchain
 		this.db = new DB();
 
 		/** @var Block genesisBlock */
-		this.genesisBlock = new Block(0, 1465154705, '0000000000000000000000000000000000000000000000000000000000000000', []);
+		this.genesisBlock = new Block(0, 1465154705, '0000000000000000000000000000000000000000000000000000000000000000', '', 0);
 
 		/** @var Migration migration */
 		var migration = new Migration(this.db);
@@ -125,7 +126,9 @@ class Blockchain
 	 */
 	validateBlock(block)
 	{
-		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('0000FFFF', 16);
+		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('000008FF', 16)
+			&& this.getLatestBlock().index+1 == block.index
+			&& this.getLatestBlock().getHash() == block.previousHash;
 	}
 }
 
