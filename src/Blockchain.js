@@ -76,6 +76,32 @@ class Blockchain
 	}
 
 	/**
+	 * Get block by height param.
+	 *
+	 * @return Block
+	 */
+	getBlockByHeight(height)
+	{
+		var blockData = this.db.select("SELECT * FROM block WHERE height = " + height);
+
+		if (!blockData) {
+			return null;
+		}
+
+		var payloadData = this.getBlockPayload(Transaction.getForBlock(blockData.id));
+
+		var block = new Block(
+			blockData.height,
+			blockData.createdAt,
+			blockData.prev,
+			payloadData,
+			blockData.nonce
+		);
+
+		return block;
+	}
+
+	/**
 	 * Get payload data for block.
 	 *
 	 * @param Transaction[] transactions

@@ -107,6 +107,18 @@ class P2PNetwork
 				}
 
 				break;
+			case Message.ASK_CERTAIN_BLOCK:
+				console.log('[P2P][INFO] Certain block asked.');
+
+				var block = self.app.blockchain.getBlockByHeight(data.message.data);
+
+				if (block != null) {
+					self.answer(data.ws, block.getRaw());
+				} else {
+					console.log('[P2P][WARNING] Asked block not found');
+				}
+				
+				break;
 			case Message.RESPONSE_CERTAIN_BLOCK:
 				console.log('[P2P][INFO] Received certain block.');
 
