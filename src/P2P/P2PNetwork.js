@@ -94,6 +94,12 @@ class P2PNetwork
 				break;
 			case Message.RESPONSE_LATEST:
 				console.log('[P2P][INFO] Latest block response received.');
+				var localLast = self.app.blockchain.getLatestBlock();
+				var remoteLast = Block.parseRawBlock(data.message.data);
+
+				console.log(localLast);
+				console.log(remoteLast);
+
 				break;
 			case Message.BROADCAST_TRANSACTION:
 				console.log('[P2P][INFO] Received new transaction.');
