@@ -132,7 +132,7 @@ class P2PNetwork
 					if (result.status) {
 						console.log('[P2P][SUCCESS] Block connected.');
 						var message = new Message(Message.QUERY_LATEST);
-						self.ask(ws, message);
+						self.ask(data.ws, message);
 					} else {
 						console.log('[P2P][ERROR] Fail to connect block');
 					}
