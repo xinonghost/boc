@@ -104,7 +104,7 @@ class RPCServer
 				self.app.p2pNetwork.broadcastBlock(self.app.blockchain.getLatestBlock().getRaw());
 			}
 
-			return res.send(JSON.stringify(res));
+			return res.send(JSON.stringify(result));
 		});
 	}
 
