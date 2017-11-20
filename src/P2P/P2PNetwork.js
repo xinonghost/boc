@@ -8,6 +8,7 @@ var WebSocket = require("ws");
 var Message = require('./Message');
 var Queue = require('./Queue');
 var Transaction = require('./../Transaction');
+var Block = require('./../Block');
 
 /**
  * Class P2PNetwork
