@@ -152,7 +152,7 @@ class Blockchain
 	 */
 	validateBlock(block)
 	{
-		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('000008FF', 16)
+		return parseInt(block.getHash().substring(0, 8), 16) < parseInt('000F08FF', 16)
 			&& this.getLatestBlock().index+1 == block.index
 			&& this.getLatestBlock().getHash() == block.previousHash;
 	}

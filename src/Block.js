@@ -292,19 +292,18 @@ class Block
 			var txSize = parseInt(txs.substring(0, 8));
 
 			if (txSize < 1 || txs.substring(8, 8+txSize).length != txSize) {
-				break;
+				throw new Exception('Transaction size is too small', Transaction.ERROR);
 			}
 
 			var tx = Transaction.fromRaw(txs.substring(8, 8+txSize));
 			if (tx.status) {
 				transactions.push(tx.data);
 			} else {
-				break;
+				throw new Exception(tx.error, Transaction.ERROR);
 			}
 
 			txs = txs.substring(8+txSize);
 		}
-
 
 		return transactions;
 	}

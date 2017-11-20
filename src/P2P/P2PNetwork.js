@@ -113,7 +113,8 @@ class P2PNetwork
 				var block = self.app.blockchain.getBlockByHeight(data.message.data);
 
 				if (block != null) {
-					self.answer(data.ws, block.getRaw());
+					var message = new Message(Message.RESPONSE_CERTAIN_BLOCK, block.getRaw());
+					self.answer(data.ws, message);
 				} else {
 					console.log('[P2P][WARNING] Asked block not found');
 				}
@@ -238,6 +239,7 @@ class P2PNetwork
 	 */
 	ask(ws, message)
 	{
+
 		ws.send(message.pack());
 	}
 

@@ -45,7 +45,7 @@ class Wallet
 	 */
 	getIssuerPair()
 	{
-		var result = this.db.query("SELECT * FROM wallet_key WHERE address = '1iQF1LQZRckzfBDg1MvMVhueoZtkzTo9s'");
+		var result = this.db.query("SELECT * FROM wallet_key WHERE address = '1LCRbQYyRi3F75jSSUdASgP2JLruoKH6bT'");
 
 		if (!result.success) {
 			return {'status':0, 'error':'DB request fail'};
