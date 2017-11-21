@@ -52,7 +52,7 @@ CREATE TABLE `transaction` (
   `output` varchar(64) NOT NULL,
   `signature` char(88) NOT NULL,
   `createdAt` bigint(16) NOT NULL,
-  `contract_id` int(11) NOT NULL DEFAULT '0',
+  `contract_id` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
@@ -84,4 +84,4 @@ CREATE TABLE `wallet_key` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-21 21:43:14
+-- Dump completed on 2017-11-21 22:15:35

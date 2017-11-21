@@ -27,7 +27,8 @@ class Transaction
 			'input': '',
 			'output': '',
 			'time': Math.round(+(new Date()) / 1000),
-			'signature': ''
+			'signature': '',
+			'contract': 0
 		};
 	}
 
@@ -48,6 +49,26 @@ class Transaction
 		}
 
 		return this;
+	}
+
+	/**
+	 * Set contract ref.
+	 *
+	 * @param int contractId
+	 */
+	setContract(contractId)
+	{
+		this.data.contract = contractId;
+	}
+
+	/**
+	 * Get contract ref.
+	 *
+	 * @return int
+	 */
+	getContract()
+	{
+		return this.data.contract;
 	}
 
 	/**
@@ -161,6 +182,8 @@ class Transaction
 			.setOutput(txData.output)
 			.setTime(txData.createdAt)
 			.setSignature(txData.signature);
+
+		transaction.setContract(txData.contract_id);
 
 		return transaction;
 	}

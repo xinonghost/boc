@@ -108,6 +108,7 @@ class RPCServer
 				var transaction = new Transaction();
 				transaction.setInput({'type':0, 'data':prevTransaction.generateHash()});
 				transaction.setOutput(req.body.address);
+				transaction.setContract(prevTransaction.data.type == 1 ? prevTransaction.generateHash() : prevTransaction.getContract());
 
 				var sender = (new Wallet()).getAddressPair(prevTransaction.data.output);
 
