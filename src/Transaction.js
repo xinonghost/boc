@@ -28,7 +28,7 @@ class Transaction
 			'output': '',
 			'time': Math.round(+(new Date()) / 1000),
 			'signature': '',
-			'contract': 0
+			'contract': ''
 		};
 	}
 
@@ -197,9 +197,18 @@ class Transaction
 			return false;
 		}
 
+		if (this.data.type == 0) {
+			prev = Transaction.findByTxid(this.data.input);
+			if (!prev) {
+				throw new Exception('Previous transaction was not found in DB.');
+			}
+
+			transaction.setContract(prev.data.type == 1 ? prev.generateHash() : prev.getContract());
+		}
+
 		return this.db.query(
-			"INSERT INTO transaction (hash, type, blockId, indx, input, output, signature, createdAt) VALUES " +
-			"('"+this.data.hash+"', "+this.data.type+", 0, 0, '"+this.data.input+"', '"+this.data.output+"', '"+this.data.signature+"', "+this.data.time+")"
+			"INSERT INTO transaction (hash, type, blockId, indx, input, output, signature, createdAt, contract_id) VALUES " +
+			"('"+this.data.hash+"', "+this.data.type+", 0, 0, '"+this.data.input+"', '"+this.data.output+"', '"+this.data.signature+"', "+this.data.time+", '"+this.getContract()+"')"
 		).success;
 	}
 
