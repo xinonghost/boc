@@ -6,6 +6,7 @@
 
 var bitcoin = require('bitcoinjs-lib');
 var DB = require('./../DB');
+var Exception = require('./../Exception');
 
 /**
  * Class Wallet
@@ -58,6 +59,29 @@ class Wallet
 		var pair = bitcoin.ECPair.fromWIF(result.data.rows[0].priv);
 
 		return {'status':1, 'data':pair};
+	}
+
+	/**
+	 * Get pair by address.
+	 *
+	 * @param string
+	 * @return object
+	 */
+	getAddressPair(address)
+	{
+		var result = this.db.query("SELECT * FROM wallet_key WHERE address = '"+address+"'");
+
+		if (!result.success) {
+			throw new Exception('DB request fail');
+		}
+
+		if (result.data.rows.length == 0) {
+			throw new Exception('Key pair not found');
+		}
+
+		var pair = bitcoin.ECPair.fromWIF(result.data.rows[0].priv);
+
+		return pair;
 	}
 }
 

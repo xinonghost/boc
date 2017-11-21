@@ -126,7 +126,7 @@ class Transaction
 	static findByHash(hash)
 	{
 		var db = new DB();
-		return db.select("SELECT hash FROM transaction WHERE hash = '"+hash+"'");
+		return db.select("SELECT * FROM transaction WHERE hash = '"+hash+"'");
 	}
 
 	/**
@@ -149,7 +149,10 @@ class Transaction
 	 */
 	static findByTxid(txid)
 	{
-		var txData = Transaction.findByHash(txid) or throw new Exception('Transaction not found in DB.');
+		var txData = Transaction.findByHash(txid);
+		if (!txData) {
+			throw new Exception('Transaction not found in DB.');
+		}
 
 		var transaction = new Transaction();
 
