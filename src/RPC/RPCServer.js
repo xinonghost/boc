@@ -109,7 +109,7 @@ class RPCServer
 				transaction.setInput({'type':0, 'data':prevTransaction.generateHash()});
 				transaction.setOutput(req.body.address);
 
-				var sender = (new Wallet()).getAddressPair(prevTransaction.output);
+				var sender = (new Wallet()).getAddressPair(prevTransaction.data.output);
 
 				var signature = bitcoinMessage.sign(
 					transaction.getDataToSign(),
