@@ -172,7 +172,7 @@ class Blockchain
 		}
 
 		if (!this.validateBlock(block)) {
-			return {'status':0, 'error':e.message};
+			return {'status':0, 'error':'Invalid block provided'};
 		}
 
 		if (!block.save()) {
