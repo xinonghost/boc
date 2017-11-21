@@ -92,6 +92,45 @@ class RPCServer
 			}
 		});
 
+		// Send contract
+		self.server.post('/send', function(req, res) {
+			if (!req.body.txid) {
+				return res.send(JSON.stringify({'status':0, 'error':'TXID not provided'}));
+			}
+
+			if (!req.body.address) {
+				return res.send(JSON.stringify({'status':0, 'error':'Address not provided'}));
+			}
+
+			try {
+				var prevTransaction = Transaction.findByTxid(req.body.txid);
+
+				var transaction = new Transaction();
+				transaction.setInput({'type':0, 'data':prevTransaction.generateHash()});
+				transaction.setOutput(req.body.address);
+
+				var sender = (new Wallet()).getAddressPair(prevTransaction.output);
+
+				var signature = bitcoinMessage.sign(
+					transaction.getDataToSign(),
+					sender.d.toBuffer(32),
+					sender.compressed
+				).toString('base64');
+
+				transaction.setSignature(signature);
+				var txid = transaction.generateHash();
+
+				if (transaction.save()) {
+					self.app.p2pNetwork.broadcastTransaction(transaction.getRaw());
+					return res.send({'status':1, 'data':txid});
+				} else {
+					return res.send({'status':0, 'error':'Cant save transaction'});
+				}
+			} catch (e) {
+				return res.send({'status':0, 'error':e.message});
+			}
+		});
+
 		// Submit new block.
 		self.server.post('/submitblock', function(req, res) {
 			if (!req.body.block) {

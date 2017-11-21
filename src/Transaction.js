@@ -7,6 +7,7 @@
 var DB = require('./DB');
 var CryptoJS = require("crypto-js");
 var Formatter = require('./Formatter');
+var Exception = require('./Exception');
 
 /**
  * Class Transaction
@@ -138,6 +139,27 @@ class Transaction
 	{
 		var db = new DB();
 		return db.select("SELECT input FROM transaction WHERE input = '"+input+"'");
+	}
+
+	/**
+	 * Get transaction object by its hash.
+	 *
+	 * @param string txid
+	 * @return Transaction
+	 */
+	static findByTxid(txid)
+	{
+		var txData = Transaction.findByHash(txid) or throw new Exception('Transaction not found in DB.');
+
+		var transaction = new Transaction();
+
+		transaction.setType(txData.type)
+			.setInput({"type":txData.type, "data":Buffer.from(txData.input, 'base64')})
+			.setOutput(txData.output)
+			.setTime(txData.createdAt)
+			.setSignature(txData.signature);
+
+		return transaction;
 	}
 
 	/**
