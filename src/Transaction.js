@@ -154,7 +154,7 @@ class Transaction
 		var transaction = new Transaction();
 
 		transaction.setType(txData.type)
-			.setInput({"type":txData.type, "data":Buffer.from(txData.input, 'base64')})
+			.setInput({"type":txData.type, "data":txData.type==0?txData.input:Buffer.from(txData.input, 'base64')})
 			.setOutput(txData.output)
 			.setTime(txData.createdAt)
 			.setSignature(txData.signature);
@@ -255,7 +255,7 @@ class Transaction
 		var transaction = new Transaction();
 
 		transaction.setType(txData.type)
-			.setInput({"type":txData.type, "data":Buffer.from(txData.input, 'base64')})
+			.setInput({"type":txData.type, "data":txData.type==0?txData.input:Buffer.from(txData.input, 'base64')})
 			.setOutput(txData.output)
 			.setTime(txData.time)
 			.setSignature(txData.signature);
@@ -283,7 +283,7 @@ class Transaction
 			var transaction = new Transaction();
 
 			transaction.setType(e.type)
-				.setInput({"type":e.type, "data":Buffer.from(e.input, 'base64')})
+				.setInput({"type":e.type, "data":e.type==0?e.input:Buffer.from(e.input, 'base64')})
 				.setOutput(e.output)
 				.setTime(e.createdAt)
 				.setSignature(e.signature).generateHash();
@@ -317,7 +317,7 @@ class Transaction
 			var transaction = new Transaction();
 
 			transaction.setType(e.type)
-				.setInput({"type":e.type, "data":Buffer.from(e.input, 'base64')})
+				.setInput({"type":e.type, "data":e.type==0?e.input:Buffer.from(e.input, 'base64')})
 				.setOutput(e.output)
 				.setTime(e.createdAt)
 				.setSignature(e.signature).generateHash();
