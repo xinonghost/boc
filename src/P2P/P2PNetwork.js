@@ -159,6 +159,7 @@ class P2PNetwork
 					var result = self.app.blockchain.connectBlock(data.message.data);
 					if (result.status) {
 						console.log('[P2P][SUCCESS] Block connected.');
+						self.broadcastBlock(self.app.blockchain.getLatestBlock().getRaw());
 					} else {
 						console.log('[P2P][ERROR] Fail to connect block');
 					}
