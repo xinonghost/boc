@@ -203,7 +203,7 @@ class Transaction
 				throw new Exception('Previous transaction was not found in DB.');
 			}
 
-			transaction.setContract(prev.data.type == 1 ? prev.generateHash() : prev.getContract());
+			this.setContract(prev.data.type == 1 ? prev.generateHash() : prev.getContract());
 		}
 
 		return this.db.query(

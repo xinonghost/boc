@@ -20,6 +20,9 @@ class Wallet
 
 		/** @var DB db DB connection. */
 		this.db = new DB();
+
+		/** @var string issuer */
+		this.issuer = '1ASU1sJXPZBPjwwpL2trLCsiJ9EXMddhqM';
 	}
 
 	/**
@@ -46,7 +49,7 @@ class Wallet
 	 */
 	getIssuerPair()
 	{
-		var result = this.db.query("SELECT * FROM wallet_key WHERE address = '1LCRbQYyRi3F75jSSUdASgP2JLruoKH6bT'");
+		var result = this.db.query("SELECT * FROM wallet_key WHERE address = '"+this.issuer+"'");
 
 		if (!result.success) {
 			return {'status':0, 'error':'DB request fail'};
