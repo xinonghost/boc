@@ -198,7 +198,7 @@ class Transaction
 		}
 
 		if (this.data.type == 0) {
-			prev = Transaction.findByTxid(this.data.input);
+			var prev = Transaction.findByTxid(this.data.input);
 			if (!prev) {
 				throw new Exception('Previous transaction was not found in DB.');
 			}
